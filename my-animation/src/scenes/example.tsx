@@ -3,27 +3,49 @@ import {makeScene2D, Circle, Rect, Layout} from '@motion-canvas/2d';
 import {all, createRef, easeInCubic, easeInQuad, easeOutCubic, waitFor} from '@motion-canvas/core';
 
 export default makeScene2D(function* (view) {
-  const rect = createRef<Rect>();
-  const circle = createRef<Circle>();
+  const rect1 = createRef<Rect>();
+  const rect2 = createRef<Rect>();
 
   view.add(
+    <>
     <Rect layout
-      ref={rect}
+      ref={rect1}
       x={-300}
       height={400}
-      direction={'column'}>
+      width={100}
+      fill={'blue'}
+      direction={'column'}
+      padding={10}>
     </Rect>
+    <Rect layout
+      ref={rect2}
+      height={400}
+      width={100}
+      fill={'blue'}
+      direction={'column'}
+      padding={10}>
+    </Rect>
+    </>
   )
   
-  rect().add(
-    <Circle 
-      ref={circle}
-      fill={'red'}
-      opacity={0}
-      width={200}
-      height={200}
-      />
-  )
+  for (var i = 0; i < 5; i++) {
+    yield* waitFor(0.25)
 
-  yield* circle().opacity(1, 2, easeOutCubic)
+    const newCircle = createRef<Circle>()
+    rect1().add(
+      <Circle 
+        ref={newCircle}
+        fill={'red'}
+        width={20}
+        height={20}
+        />
+    )
+
+    yield* waitFor(0.25)
+
+    newCircle().remove()
+
+    rect2().insert(newCircle(), 0)
+  }
+
 });
